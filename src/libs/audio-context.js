@@ -1,0 +1,1 @@
+export const audioContext = new AudioContext({ sampleRate: 8000 });
