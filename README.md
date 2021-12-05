@@ -2,6 +2,18 @@
 This is a PoC Implementation with the main goal to send audio back and forth between a windows APP and also remote control it.
 
 ## Use this
+https://lemanschik.com/poc-html5-interface-vbRichClient-WebServer/src/index.html
+
+### how to specify a alternativ server
+https://localhost:8080/?wss=wss://localhost:1214
+
+## Releasing
+When you want to create a new release, follow these steps:
+
+1. Update the version in your project's package.json file (e.g. 1.2.3)
+2. git commit -am v1.2.3
+3. git tag v1.2.3
+4. git push && git push --tags
 
 # Research 
 

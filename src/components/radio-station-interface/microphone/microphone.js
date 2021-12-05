@@ -1,3 +1,7 @@
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+
+
 // Preserves import.meta which is only there on first execution.
 const importMetaUrl = import.meta.url;
 
@@ -54,8 +58,10 @@ const currentScriptLocation = getCurrentScriptPathUrl()
         // @ts-ignore
         const micButton = document.getElementById('mic-button')
         if (inputStatus && micButton) {
-
-            const inputSocket = new WebSocket(`wss://${window.location.host}/input`);
+            const wssUrl = urlParams.get('wss') || `wss://${window.location.host}/input`
+            console.log(wssUrl)
+            return
+            const inputSocket = new WebSocket(wssUrl);
 
             inputSocket.onmessage = function (event) { console.log(event);  return false; };
             inputSocket.onopen = function () {

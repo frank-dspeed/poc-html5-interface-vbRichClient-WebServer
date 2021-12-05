@@ -5,7 +5,10 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "postinstall": "cd electron && npm ci && electron-builder install-app-deps",
+    "build": "cd electron && electron-builder --windows",
+    "release": "cd electron && electron-builder --windows --publish always"
   },
   "repository": {
     "type": "git",
