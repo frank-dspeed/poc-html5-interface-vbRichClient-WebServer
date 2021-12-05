@@ -1,0 +1,36 @@
+{
+  "name": "webrtc-radio",
+  "version": "0.0.0",
+  "description": "A Internet Radio Station + Client",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frank-dspeed/internet-radio.git"
+  },
+  "keywords": [
+    "radio",
+    "stream",
+    "audio",
+    "browser",
+    "web",
+    "html6",
+    "html5"
+  ],
+  "author": "Frank Lemanschik <frank@lemanschik.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/frank-dspeed/internet-radio/issues"
+  },
+  "homepage": "https://github.com/frank-dspeed/internet-radio#readme",
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.11.11",
+    "@types/ws": "^8.2.0",
+    "express": "^4.17.1",
+    "ws": "^8.3.0"
+  }
+}
