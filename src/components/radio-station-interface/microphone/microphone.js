@@ -36,7 +36,7 @@ const currentScriptLocation = getCurrentScriptPathUrl()
         //  * gets cached. and you need to refresh the site.
         //  */
         await Promise.all([
-             fetch('${currentScriptLocation}/../../../libs/audio-context.js'),
+             fetch('./../../../libs/audio-context.js'),
              fetch(`${currentScriptLocation}/audio-worklet.js`),
         ]);
 
