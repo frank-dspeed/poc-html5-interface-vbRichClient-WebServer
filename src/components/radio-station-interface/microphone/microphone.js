@@ -59,8 +59,8 @@ const currentScriptLocation = getCurrentScriptPathUrl()
         const micButton = document.getElementById('mic-button')
         if (inputStatus && micButton) {
             const wssUrl = urlParams.get('wss') || `wss://${window.location.host}/input`
-            console.log(wssUrl)
-            return
+            console.log(`Using: ${wssUrl}`)
+            
             const inputSocket = new WebSocket(wssUrl);
 
             inputSocket.onmessage = function (event) { console.log(event);  return false; };
