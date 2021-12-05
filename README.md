@@ -3,6 +3,9 @@ This is a PoC Implementation with the main goal to send audio back and forth bet
 
 ## Use this
 https://lemanschik.com/poc-html5-interface-vbRichClient-WebServer/src/index.html
+https://lemanschik.com/poc-html5-interface-vbRichClient-WebServer/src/index.html?wss=wss://localhost:8080/input
+
+
 
 ### how to specify a alternativ server
 https://localhost:8080/?wss=wss://localhost:1214
