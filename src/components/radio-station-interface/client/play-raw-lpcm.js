@@ -24,7 +24,9 @@ const audioStreamDestination = audioContext.createMediaStreamDestination();
  */
  const convertFloatToAudioBuffer = (data) => {
     const sampleRate = 8000 | audioContext.sampleRate
-    const buf = audioContext.createBuffer(1, 128, sampleRate);
+    const channels = 1;
+    const sampleLength = 128 | data.length; // 1sec = sampleRate * 1
+    const buf = audioContext.createBuffer(channels, sampleLength, sampleRate); // Empty Audio
     buf.copyToChannel(new Float32Array(data), 0); // depending on your processing this could be already a float32array
     return buf;
 }
@@ -39,72 +41,3 @@ const play = (data) => {
     player.connect(audioContext.destination);    
     player.start(0);
 }
-
-
-const getDataViaWebsockets = () => {
-    // Creates new WebSocket object with an ws URI as the parameter
-    const recivingSocket = new WebSocket('ws://');
-
-    // Fired when a connection with a WebSocket is opened,
-    //recivingSocket.onopen = function () {
-    //   setInterval(function() {
-    //     if (recivingSocket.bufferedAmount == 0)
-    //       recivingSocket.send(getUpdateData());
-    //   }, 50);
-    //};
-
-    // Fired when a connection with a WebSocket is closed,
-    recivingSocket.onclose = function(event) {
-        console.log(event)
-    };
-
-    // Fired when a connection with a WebSocket has been closed because of an error,
-    recivingSocket.onerror = function(event) {
-        console.log(event)
-    };
-}
- 
-
-/**
- * 
- * @param {{data: ArrayBufferLike}} evt 
- */
-socket.messageReceived = function ({ data }) {
-    play(data);
-}
-/**
- * 
- * @param {HTMLElement} el 
- * @returns 
- */
-export const client = (el) => {
-    return el;
-}
-
-
-/*
-    Example recived buffer ogg
-
-
-source = audioCtx.createBufferSource();
-var request = new XMLHttpRequest();
-
-request.open('GET', 'viper.ogg', true);
-
-request.responseType = 'arraybuffer';
-
-
-request.onload = function() {
-  var audioData = request.response;
-
-  audioCtx.decodeAudioData(audioData, function(buffer) {
-      source.buffer = buffer;
-
-      source.connect(audioCtx.destination);
-      source.loop = true;
-    },
-
-    function(e){"Error with decoding audio data" + e.err});
-
-}
-*/ 

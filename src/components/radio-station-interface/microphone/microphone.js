@@ -41,7 +41,7 @@ const currentScriptLocation = getCurrentScriptPathUrl()
         ]);
 
         // // Start recorder AudioWorklet and connect it to the mic
-        const { audioContext } = await import('../../../libs/audio-context.js');
+        const { audioContext } = await import(`${currentScriptLocation}/../../../libs/audio-context.js`);
         await audioContext.audioWorklet.addModule(`${currentScriptLocation}/audio-worklet.js`);
         
         const requestMicAccess = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -58,41 +58,79 @@ const currentScriptLocation = getCurrentScriptPathUrl()
         // @ts-ignore
         const micButton = document.getElementById('mic-button')
         if (inputStatus && micButton) {
-            const wssUrl = urlParams.get('wss') || `wss://${window.location.host}/input`
-            console.log(`Using: ${wssUrl}`)
             
-            const inputSocket = new WebSocket(wssUrl);
+            const httpUrl = urlParams.get('url'); // || `/audioStream` 
+            if (!httpUrl) {
+                const wssUrl = urlParams.get('wss') || `wss://${window.location.host}/input`
+                console.log(`Using: ${wssUrl}`)
+                
+                const inputSocket = new WebSocket(wssUrl);
+    
+                inputSocket.onmessage = function (event) { console.log(event);  return false; };
+                inputSocket.onopen = function () {
+                    inputStatus.innerHTML = `<span style="color: green;">OPEN</span>`;
+                    micButton.setAttribute('disabled','')
+                    micButton.removeAttribute("enabled");
+                    return false
+                }
+                
+                // Fired when a connection with a WebSocket is closed,
+                inputSocket.onclose = function(event) {
+                    inputStatus.innerHTML = `<span style="color: brown;">CLOSED: ${JSON.stringify(event)}</span>`;
+                    micButton.removeAttribute("disabled");
+                    micButton.setAttribute('enabled', '')
+                    return false
+                };
+            
+                // Fired when a connection with a WebSocket has been closed because of an error,
+                inputSocket.onerror = function(event) {
+                    inputStatus.innerHTML = `<span style="color: red;">ERROR: ${JSON.stringify(event)}</span>`;
+                    micButton.removeAttribute("disabled");
+                    micButton.setAttribute('enabled','')
+                    return false
+                };
+                // @ts-ignore
+                recorder.port.onmessage = (ev) => { 
+                    const constants = ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'];
+                    if (inputSocket.readyState === 1) {
+                        inputSocket.send(ev.data); // sent as byte[512]
+                    }        
+                }; 
+            } else {
 
-            inputSocket.onmessage = function (event) { console.log(event);  return false; };
-            inputSocket.onopen = function () {
-                inputStatus.innerHTML = `<span style="color: green;">OPEN</span>`;
-                micButton.setAttribute('disabled','')
-                micButton.removeAttribute("enabled");
-                return false
+                const stream = new ReadableStream({
+                    start(controller) {
+                      // Die folgende Funktion behandelt jeden Daten-Chunk
+                      // @ts-ignore
+                      recorder.port.onmessage = (ev) => { 
+                            controller.close();
+                            controller.enqueue(ev.data);
+                      }; 
+                      
+                    }
+                  });
+
+                const { readable, writable } = new TransformStream();
+                const inputSocket = writable.getWriter();
+                
+        
+
+                const responsePromise = fetch(httpUrl, {
+                    method: 'POST',
+                    body: readable,
+                    allowHTTP1ForStreamingUpload: true,
+                }).catch(event=>{
+                    inputStatus.innerHTML = `<span style="color: red;">ERROR: ${JSON.stringify(event)}</span>`;
+                    micButton.removeAttribute("disabled");
+                    micButton.setAttribute('enabled','')
+                }).then((event)=>{
+                    inputStatus.innerHTML = `<span style="color: brown;">CLOSED: ${JSON.stringify(event)}</span>`;
+                    micButton.removeAttribute("disabled");
+                    micButton.setAttribute('enabled', '')
+                });
+                
             }
             
-            // Fired when a connection with a WebSocket is closed,
-            inputSocket.onclose = function(event) {
-                inputStatus.innerHTML = `<span style="color: brown;">CLOSED: ${JSON.stringify(event)}</span>`;
-                micButton.removeAttribute("disabled");
-                micButton.setAttribute('enabled', '')
-                return false
-            };
-        
-            // Fired when a connection with a WebSocket has been closed because of an error,
-            inputSocket.onerror = function(event) {
-                inputStatus.innerHTML = `<span style="color: red;">ERROR: ${JSON.stringify(event)}</span>`;
-                micButton.removeAttribute("disabled");
-                micButton.setAttribute('enabled','')
-                return false
-            };
-            // @ts-ignore
-            recorder.port.onmessage = (ev) => { 
-                const constants = ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'];
-                if (inputSocket.readyState === 1) {
-                    inputSocket.send(ev.data); // sent as byte[512]
-                }        
-            }; 
         
             recorder.connect(audioContext.destination);
         };
@@ -112,33 +150,37 @@ const currentScriptLocation = getCurrentScriptPathUrl()
  * @param {HTMLElement} el 
  */
 const renderMicMode = (el) => {
-    const Status = document.createElement('div')
-    Status.id = 'Status';
+    el.innerHTML = `
+        <div id="Status">
+            <div id="mic-status"></div>
+            <div id="input-status"></div>
+            <div id="sample-rate"></div>
+        </div>
+    `
+    // const Status = document.createElement('div')
+    // Status.id = 'Status';
 
-    const micStatus = document.createElement('div')
-    micStatus.id = 'mic-status';
-    Status.append(micStatus);
+    // const micStatus = document.createElement('div')
+    // micStatus.id = 'mic-status';
+    // Status.append(micStatus);
 
-    const inputStatus = document.createElement('div')
-    inputStatus.id = 'input-status';
-    Status.append(inputStatus);
+    // const inputStatus = document.createElement('div')
+    // inputStatus.id = 'input-status';
+    // Status.append(inputStatus);
 
     const micButton = document.createElement('button')
     micButton.innerText = 'Mic Live'
     micButton.id = 'mic-button'
     micButton.onclick = async () => {
         // @ts-ignore because of name: 'microphone' not in ts
-        await navigator.permissions.query({ name: 'microphone' }).then(function(result) {
-            handleMicStatus(result.state).catch(e=>console.log(e));;
-            result.onchange = function() {           
-               
-               handleMicStatus(result.state).catch(e=>console.log(e));
-            };
-       });   
+        const permissionStatus = await navigator.permissions.query({ name: 'microphone' })
+        const { state } = permissionStatus;
+        handleMicStatus(state).catch(e=>console.log(e));;
+        permissionStatus.onchange = () => handleMicStatus(state).catch(e=>console.log(e));
     }
     
     el.append(micButton);
-    el.append(Status);
+    //el.append(Status);
 }
 
 customElements.define('microphone-mode', class extends HTMLElement {

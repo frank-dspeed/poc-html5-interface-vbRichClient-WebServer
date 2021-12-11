@@ -1,4 +1,4 @@
-import './microphone/microphone.js'
+import './microphone/microphone.js';
 
 /**
  * 
