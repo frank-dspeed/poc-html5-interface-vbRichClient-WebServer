@@ -96,8 +96,10 @@ const currentScriptLocation = getCurrentScriptPathUrl()
                         inputSocket.send(ev.data); // sent as byte[512]
                     }        
                 }; 
-            } else {
-
+            } else if(urlParams.get('stream')) {
+                /**
+                 * Http2 Stream example
+                 */
                 const stream = new ReadableStream({
                     start(controller) {
                       // Die folgende Funktion behandelt jeden Daten-Chunk
@@ -113,8 +115,6 @@ const currentScriptLocation = getCurrentScriptPathUrl()
                 const { readable, writable } = new TransformStream();
                 const inputSocket = writable.getWriter();
                 
-        
-
                 const responsePromise = fetch(httpUrl, {
                     method: 'POST',
                     body: readable,
@@ -129,9 +129,53 @@ const currentScriptLocation = getCurrentScriptPathUrl()
                     micButton.setAttribute('enabled', '')
                 });
                 
+            } else {
+                const worker = new Worker(`${currentScriptLocation}/httppost-worker.js`);
+                recorder.port.onmessage = (ev) => worker.postMessage(ev.data);
+                let lastMessage = 'NOT CONNECTED';
+                inputStatus.innerHTML = `<span style="color: black;">${lastMessage}</span>`;
+                worker.onmessage = (ev) => {
+                    const msg = ev.data;
+                    if (lastMessage !== msg) {
+                        lastMessage = msg;
+                        if (lastMessage === 'ok') {
+                            inputStatus.innerHTML = `<span style="color: green;">${lastMessage}`;
+                            micButton.setAttribute('disabled','')
+                            micButton.removeAttribute("enabled");
+                        } else {
+                            if (parseInt(msg) < 1000) {
+                                console.log('EMPTY', msg)
+                            }
+                            inputStatus.innerHTML = `<span style="color: green;">Audio Buffer Length: ${msg}</span>`;
+                            micButton.removeAttribute("disabled");
+                            micButton.setAttribute('enabled','')
+                        }
+                    }
+                }
+                new Promise(res=>setTimeout(()=> {
+                    console.log(lastMessage)
+                    res()
+                },2000))
+                // (ev) => { 
+                //     fetch(httpUrl, {
+                //         method: 'POST',
+                //         body: ev.data,
+                //         allowHTTP1ForStreamingUpload: true,
+                //     }).catch(event=>{
+                //         inputStatus.innerHTML = `<span style="color: red;">ERROR: ${JSON.stringify(event)}</span>`;
+                //         micButton.removeAttribute("disabled");
+                //         micButton.setAttribute('enabled','')
+                //     })
+                    
+                //     // .then((event)=>{
+                //     //     inputStatus.innerHTML = `<span style="color: brown;">CLOSED: ${JSON.stringify(event)}</span>`;
+                //     //     micButton.removeAttribute("disabled");
+                //     //     micButton.setAttribute('enabled', '')
+                //     // });
+                // }; 
+                
             }
             
-        
             recorder.connect(audioContext.destination);
         };
     }
