@@ -1,0 +1,20 @@
+{
+    "name": "package.nw",
+    "version": "0.0.0",
+    "description": "A wrapper to deploy that as a windows app.",
+    "main": "index.html",
+    "type": "commonjs",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Frank Lemanschik <frank@lemanschik.com>",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "express": "^4.17.1",
+        "http-proxy": "^1.18.1",
+        "naudiodon": "^2.3.6",
+        "socket.io": "^4.4.0",
+        "speaker": "^0.5.3",
+        "webrtc-adapter": "^8.1.1"
+    }
+}

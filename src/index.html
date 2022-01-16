@@ -5,5 +5,14 @@
         <titel>POC - Realtime</titel>
         <script type="module" src="index.js"></script>
     </head>
-    <body></body>
+    <body></body><script>
+        Promise.resolve(async ()=>{
+            const audioContext = new AudioContext()
+await audioContext.audioWorklet.addModule('nois.js')
+const whiteNoiseNode = new AudioWorkletNode(audioContext, 'white-noise-processor')
+whiteNoiseNode.connect(audioContext.destination)
+whiteNoiseNode.play(0)
+        })
+        
+    </script>
 </html>

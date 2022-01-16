@@ -67,13 +67,6 @@ const getDataViaWebsockets = () => {
 
 /**
  * 
- * @param {{data: ArrayBufferLike}} evt 
- */
-socket.messageReceived = function ({ data }) {
-    play(data);
-}
-/**
- * 
  * @param {HTMLElement} el 
  * @returns 
  */

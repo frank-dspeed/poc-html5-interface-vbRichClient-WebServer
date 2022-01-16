@@ -98,3 +98,11 @@ Finally you create a mixer stream (via the BASSmix add-on) and add the two decod
 Now you can setup an encoder on the mixer stream - which will then encoder the mixdown of both recordings.
 
 Note: you should make the mixer stream itself also a decoding one (so that nothing is going to the output and adding a feedback echo) - which means you then must query the sample data from the mixer manually via BASS_ChannelGetData (at best in an extra thread)!
+
+
+## Current Problems Web Audio API 
+https://developer.mozilla.org/en-US/docs/Web/API/OfflineAudioContext allows resampling in a batch
+Setting the Sample Rate of Audio Context does not work it is os dependent and browser dependent
+
+When we record 1 sec audio we need 250 ms to send it so 1 sec + 250ms 
+how do we compensate the 250ms on each send.

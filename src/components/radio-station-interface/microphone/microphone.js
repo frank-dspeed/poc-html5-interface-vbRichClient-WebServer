@@ -60,97 +60,81 @@ const currentScriptLocation = getCurrentScriptPathUrl()
         if (inputStatus && micButton) {
             
             const httpUrl = urlParams.get('url'); // || `/audioStream` 
-            if (!httpUrl) {
-                const wssUrl = urlParams.get('wss') || `wss://${window.location.host}/input`
-                console.log(`Using: ${wssUrl}`)
-                
-                const inputSocket = new WebSocket(wssUrl);
-    
-                inputSocket.onmessage = function (event) { console.log(event);  return false; };
-                inputSocket.onopen = function () {
-                    inputStatus.innerHTML = `<span style="color: green;">OPEN</span>`;
-                    micButton.setAttribute('disabled','')
-                    micButton.removeAttribute("enabled");
-                    return false
+            const wssUrl = urlParams.get('wss');
+            if (!httpUrl || wssUrl) {
+                const wssUrl = wssUrl || `wss://${window.location.host}/input`;
+                const worker = new Worker(`${currentScriptLocation}/websocket-worker.js`);
+                worker.onmessage = async (ev) => {
+                    
+                    if (typeof ev.data === 'string') {
+                        const json = JSON.parse(ev.data);
+                        if (json.event === 'close') {
+                            recorder.onmessage = () => {};
+                            recorder.close()
+                            const userMediaInputStream = await navigator.mediaDevices.getUserMedia(constraints)
+                            userMediaInputStream.getAudioTracks()
+                                    .forEach(track => track.stop());
+                            worker.terminate();
+                            inputStatus.innerHTML = `<span style="color: brown;">CLOSED</span>`;
+                            micButton.removeAttribute("disabled");
+                            micButton.setAttribute('enabled', '')
+                        }
+                        
+                        if (json.event === 'open') {
+                            inputStatus.innerHTML = `<span style="color: green;">OPEN}`;
+                            micButton.setAttribute('disabled','')
+                            micButton.removeAttribute("enabled");
+                            recorder.port.onmessage = (ev) => worker.postMessage(ev.data);
+                            recorder.connect(audioContext.destination);
+                        }
+                    } 
+                    
                 }
-                
-                // Fired when a connection with a WebSocket is closed,
-                inputSocket.onclose = function(event) {
-                    inputStatus.innerHTML = `<span style="color: brown;">CLOSED: ${JSON.stringify(event)}</span>`;
-                    micButton.removeAttribute("disabled");
-                    micButton.setAttribute('enabled', '')
-                    return false
-                };
-            
-                // Fired when a connection with a WebSocket has been closed because of an error,
-                inputSocket.onerror = function(event) {
-                    inputStatus.innerHTML = `<span style="color: red;">ERROR: ${JSON.stringify(event)}</span>`;
-                    micButton.removeAttribute("disabled");
-                    micButton.setAttribute('enabled','')
-                    return false
-                };
-                // @ts-ignore
-                recorder.port.onmessage = (ev) => { 
-                    const constants = ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'];
-                    if (inputSocket.readyState === 1) {
-                        inputSocket.send(ev.data); // sent as byte[512]
-                    }        
-                }; 
-            } else if(urlParams.get('stream')) {
-                /**
-                 * Http2 Stream example
-                 */
-                const stream = new ReadableStream({
-                    start(controller) {
-                      // Die folgende Funktion behandelt jeden Daten-Chunk
-                      // @ts-ignore
-                      recorder.port.onmessage = (ev) => { 
-                            controller.close();
-                            controller.enqueue(ev.data);
-                      }; 
-                      
-                    }
-                  });
 
-                const { readable, writable } = new TransformStream();
-                const inputSocket = writable.getWriter();
+                worker.postMessage(JSON.stringify({ wssUrl })) // Send url parm to the worker
                 
-                const responsePromise = fetch(httpUrl, {
-                    method: 'POST',
-                    body: readable,
-                    allowHTTP1ForStreamingUpload: true,
-                }).catch(event=>{
-                    inputStatus.innerHTML = `<span style="color: red;">ERROR: ${JSON.stringify(event)}</span>`;
-                    micButton.removeAttribute("disabled");
-                    micButton.setAttribute('enabled','')
-                }).then((event)=>{
-                    inputStatus.innerHTML = `<span style="color: brown;">CLOSED: ${JSON.stringify(event)}</span>`;
-                    micButton.removeAttribute("disabled");
-                    micButton.setAttribute('enabled', '')
-                });
+            } else if(urlParams.get('webrtc')) {
+
+            } else if(urlParams.get('httpstream')) {
+
                 
             } else {
                 const worker = new Worker(`${currentScriptLocation}/httppost-worker.js`);
+                worker.postMessage(JSON.stringify({ httpUrl })) // Send url parm to the worker
                 recorder.port.onmessage = (ev) => worker.postMessage(ev.data);
-                let lastMessage = 'NOT CONNECTED';
-                inputStatus.innerHTML = `<span style="color: black;">${lastMessage}</span>`;
-                worker.onmessage = (ev) => {
-                    const msg = ev.data;
-                    if (lastMessage !== msg) {
-                        lastMessage = msg;
-                        if (lastMessage === 'ok') {
-                            inputStatus.innerHTML = `<span style="color: green;">${lastMessage}`;
-                            micButton.setAttribute('disabled','')
-                            micButton.removeAttribute("enabled");
-                        } else {
-                            if (parseInt(msg) < 1000) {
-                                console.log('EMPTY', msg)
+                let lastMessage = 'CLOSED';
+                inputStatus.innerHTML = `<span style="color: black;">CLOSED</span>`;
+                worker.onmessage = async (ev) => {
+                    
+                    if (typeof ev.data === 'string') {
+                        const json = JSON.parse(ev.data);
+                        if (json.exit) {
+                            recorder.onmessage = () => {};
+                            const userMediaInputStream = await navigator.mediaDevices.getUserMedia(constraints)
+                            userMediaInputStream.getAudioTracks()
+                                    .forEach(track => track.stop());
+                            worker.terminate();
+                            lastMessage = 'NOT CONNECTED';
+                        }
+                    } else {
+                        const msg = ev.data;
+                        if (lastMessage !== msg) {
+                            lastMessage = msg;
+                            if (lastMessage === 'ok') {
+                                inputStatus.innerHTML = `<span style="color: green;">OPEN`;
+                                micButton.setAttribute('disabled','')
+                                micButton.removeAttribute("enabled");
+                            } else {
+                                if (parseInt(msg) < 1000) {
+                                    console.log('EMPTY', msg)
+                                }
+                                inputStatus.innerHTML = `<span style="color: green;">Audio Buffer Length: ${msg}</span>`;
+                                micButton.removeAttribute("disabled");
+                                micButton.setAttribute('enabled','')
                             }
-                            inputStatus.innerHTML = `<span style="color: green;">Audio Buffer Length: ${msg}</span>`;
-                            micButton.removeAttribute("disabled");
-                            micButton.setAttribute('enabled','')
                         }
                     }
+                    
                 }
                 new Promise(res=>setTimeout(()=> {
                     console.log(lastMessage)
@@ -173,10 +157,10 @@ const currentScriptLocation = getCurrentScriptPathUrl()
                 //     //     micButton.setAttribute('enabled', '')
                 //     // });
                 // }; 
-                
+                recorder.connect(audioContext.destination);
             }
             
-            recorder.connect(audioContext.destination);
+            
         };
     }
   

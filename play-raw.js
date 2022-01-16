@@ -6,5 +6,5 @@ var speaker = new Speaker({
     float: true,
   });
 
-  import { readFileSync, promises } from 'fs';
-  speaker.write(readFileSync('./audio.raw'))
+import { readFileSync, promises } from 'fs';
+speaker.write(readFileSync('./audio.raw'))

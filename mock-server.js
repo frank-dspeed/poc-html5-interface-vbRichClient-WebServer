@@ -12,11 +12,29 @@ const { writeFile } = promises;
   
 
 const app = express();
+let lastMessageRecived = Date.now();
+let lastLatency = 0;
 app.post('/audioStream', (req, res) => {
-   console.log(req.headers)
-   req.on('data', (chunk) => console.log(chunk))
-   req.on('data', (chunk) => console.log(chunk))
-   //res.writeHead(200, { 'Content-Type': 'text/plain' });    
+   //console.log(req.headers)
+   setTimeout(()=>{
+      const now = Date.now();
+      const latency = now - lastMessageRecived;
+      console.log({ lastLatency, latency })
+      lastLatency = latency;
+      lastMessageRecived = now;
+      
+      req.on('data', (chunk) => {
+         console.log(chunk, latency, chunk.length)
+      });
+      
+      req.on('end', () => {
+         console.log('took', Date.now() - lastMessageRecived)
+         res.json({ audioStream: latency })
+      
+      });
+      //res.writeHead(200, { 'Content-Type': 'text/plain' });    
+   }, 500)
+   
 })
 
 app.use(express.static('src'));

@@ -10,7 +10,7 @@
 // @ts-ignore
 class RecorderWorkletProcessor extends AudioWorkletProcessor {
     // @ts-ignore outputs, parameters
-    process(inputs) {
+    process(inputs, output) {
       /**
       * @type {Float32Array} length 128 Float32Array(128)
       * non-interleaved IEEE754 32-bit linear PCM 
@@ -200,6 +200,8 @@ class RecorderWorkletProcessor extends AudioWorkletProcessor {
 
         
         return cb(buffer, view);
+        
+
         
       }
       const exampleConfig = {
