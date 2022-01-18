@@ -2,19 +2,19 @@
     "name": "package.nw",
     "version": "0.0.0",
     "description": "A wrapper to deploy that as a windows app.",
-    "main": "index.html",
+    "main": "server.js",
     "type": "commonjs",
     "scripts": {
+        "start": "node index.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
+    "chromium-args": "--allow-running-insecure-content --ignore-certificate-errors",
     "author": "Frank Lemanschik <frank@lemanschik.com>",
     "license": "Apache-2.0",
     "dependencies": {
-        "express": "^4.17.1",
+        "express": "^4.17.2",
         "http-proxy": "^1.18.1",
-        "naudiodon": "^2.3.6",
         "socket.io": "^4.4.0",
-        "speaker": "^0.5.3",
         "webrtc-adapter": "^8.1.1"
     }
 }

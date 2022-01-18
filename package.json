@@ -2,13 +2,15 @@
   "name": "webrtc-radio",
   "version": "0.0.0",
   "description": "A Internet Radio Station + Client",
-  "main": "src/index.js",
+  "main": "audio-automation-luncher/index.js",
   "type": "module",
   "scripts": {
     "test": "mocha",
-    "postinstall": "cd electron && npm ci && electron-builder install-app-deps",
-    "build": "cd electron && electron-builder --windows",
-    "release": "cd electron && electron-builder --windows --publish always"
+    "start": "cd audio-automation-luncher && node server.js",
+    "preinstall": "#cd audio-automation-luncher && cd npm install --only=prod",
+    "postinstall": "#cd audio-automation-luncher && cd npm install --only=prod # cd electron && npm ci && electron-builder install-app-deps",
+    "build": "# cd electron && electron-builder --windows",
+    "release": "# cd electron && electron-builder --windows --publish always"
   },
   "repository": {
     "type": "git",
@@ -30,23 +32,24 @@
   },
   "homepage": "https://github.com/frank-dspeed/internet-radio#readme",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.1.1",
     "@types/express": "^4.17.13",
     "@types/http-proxy": "^1.17.7",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11.11",
+    "@types/nw.gui": "^0.0.21",
+    "@types/nw.js": "^0.13.14",
     "@types/ws": "^8.2.0",
     "@typescript/lib-dom": "npm:@types/web@^0.0.48",
-    "express": "^4.17.1",
+    "express": "^4.17.2",
     "http-proxy": "^1.18.1",
-    "ws": "^8.3.0"
-  },
-  "dependencies": {
-    "@rollup/plugin-commonjs": "^21.0.1",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.1.1",
-    "@types/nw.gui": "^0.0.21",
     "rollup": "^2.61.1",
     "socket.io": "^4.4.0",
-    "speaker": "^0.5.3"
+    "webrtc-adapter": "^8.1.1"
+  },
+  "dependencies": {
+    "audio-automation-luncher": "file:audio-automation-luncher"
   }
 }

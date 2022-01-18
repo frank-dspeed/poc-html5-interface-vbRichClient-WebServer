@@ -2,8 +2,8 @@
 This is a PoC Implementation with the main goal to send audio back and forth between a windows APP and also remote control it.
 
 ## Use this
-https://lemanschik.com/poc-html5-interface-vbRichClient-WebServer/src/index.html
-https://lemanschik.com/poc-html5-interface-vbRichClient-WebServer/src/index.html?wss=wss://localhost:8080/input
+https://lemanschik.com/poc-html5-interface-vbRichClient-WebServer/audio-automation-luncher/index.html
+https://lemanschik.com/poc-html5-interface-vbRichClient-WebServer/audio-automation-luncher/index.html?wss=wss://localhost:8080/input
 
 
 
