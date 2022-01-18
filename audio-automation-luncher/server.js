@@ -16,7 +16,7 @@ const cert = '-----BEGIN CERTIFICATE-----\nMIIDkzCCAnugAwIBAgIUaxuZYwNCdBsOL8DbY
 const server = ( process.env.ON_HEROKU 
     ? app 
     : createSecureServer({ key, cert }, app) 
-).listen(8080);
+).listen(process.env.PORT || 8080);
 
 const webSocketServer = new WebSocketServer(server);
 
@@ -31,6 +31,6 @@ WebRTC.on('connect',  (/** @type {Socket} */ stream) => {
 
 // @ts-ignore // Detect Running inside NWJS package.json chromium-args insecure https
 if (globalThis.nw !== undefined) { 
-    require('nw.gui')
+    
     nw.Window.open( 'https://localhost:8080' /** 'index.html' **/, {}, function(win) {}); 
 };
