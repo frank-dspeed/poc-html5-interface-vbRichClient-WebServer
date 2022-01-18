@@ -24,7 +24,7 @@ const isConnected = ({ signalingState, localDescription, remoteDescription }) =>
 * @property {(reason?: string)=>void} close
 */
 /** @type {(serverUrl?: string)=>Promise<signalStream>} */
-const getSignalStream = async (serverUrl="wss://localhost:8080/webRTC") => {
+const getSignalStream = async (serverUrl=`wss://${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/webRTC`) => {
     console.log(`getSignalStream(${serverUrl})`);
     // @ts-ignore
     if (!globalThis.io) { await import(`./${window.require ? 'node_modules/socket.io/client-dist' : 'socket.io'}/socket.io.esm.min.js`).then(m=> globalThis.io = /** @type {WebSocketServer}*/ m.io) };
