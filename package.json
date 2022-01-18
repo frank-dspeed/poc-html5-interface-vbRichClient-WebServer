@@ -12,6 +12,9 @@
     "build": "# cd electron && electron-builder --windows",
     "release": "# cd electron && electron-builder --windows --publish always"
   },
+  "engines": {
+    "node": "17.1.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/frank-dspeed/internet-radio.git"
