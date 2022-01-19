@@ -29,12 +29,6 @@ jobs:
         with:
           node-version: 17.4
       - name: Build/release Electron app
-        with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          github_token: ${{ secrets.github_token }}
         run: |
           #export DEBIAN_FRONTEND=noninteractive && \
           #apt update -y && apt-get install build-essential curl wget -y && \
