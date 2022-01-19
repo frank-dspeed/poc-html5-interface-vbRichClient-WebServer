@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         #os: [macos-latest, ubuntu-latest, windows-latest]
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latesti]
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2
@@ -24,9 +24,9 @@ jobs:
           # If the commit is tagged with a version (e.g. "v1.0.0"),
           # release the app after building
         release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-      run: |
-        #export DEBIAN_FRONTEND=noninteractive && \
-        #apt update -y && apt-get install build-essential curl wget -y && \
-        #curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n && bash n latest && node -v
-        node -v
+        run: |
+          #export DEBIAN_FRONTEND=noninteractive && \
+          #apt update -y && apt-get install build-essential curl wget -y && \
+          #curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n && bash n latest && node -v
+          node -v
 
