@@ -15,12 +15,12 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-  release:
+  Create-PackageNW:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         #os: [macos-latest, ubuntu-latest, windows-latest]
-        os: [ubuntu-latest, windows-latesti]
+        os: [ ubuntu-latest, windows-latest ]
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2
@@ -28,16 +28,17 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 17.4
-      - name: Build/release Electron app
-        with:
+      - name: Build/release package.nw
+        #with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
           # If the commit is tagged with a version (e.g. "v1.0.0"),
           # release the app after building
-          github_token: ${{ secrets.github_token }}
+          # github_token: ${{ secrets.github_token }}
         run: |
-          #export DEBIAN_FRONTEND=noninteractive && \
-          #apt update -y && apt-get install build-essential curl wget -y && \
+          export DEBIAN_FRONTEND=noninteractive && \
+          apt update -y && apt-get install build-essential curl wget p7zip-full -y && \
           #curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n && bash n latest && node -v
-          node -v
+          cd audio-automation-luncher && cd npm install --only=prod
+          7z a -tzip package.nw ./
 
