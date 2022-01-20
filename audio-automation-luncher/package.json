@@ -16,5 +16,8 @@
         "http-proxy": "^1.18.1",
         "socket.io": "^4.4.0",
         "webrtc-adapter": "^8.1.1"
+    },
+    "devDependencies": {
+        "rcedit": "github:electron/node-rcedit"
     }
 }

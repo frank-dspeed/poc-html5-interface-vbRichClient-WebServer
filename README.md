@@ -106,3 +106,63 @@ Setting the Sample Rate of Audio Context does not work it is os dependent and br
 
 When we record 1 sec audio we need 250 ms to send it so 1 sec + 250ms 
 how do we compensate the 250ms on each send.
+
+## Conclusion solution Answer
+good answer from me about MediaStream => MediaStram https://stackoverflow.com/questions/11292076/load-audiodata-into-audiobuffersourcenode-from-audio-element-via-createmediae/70753627#70753627
+
+as also the so called looseEcho algo that simply echos the last value 
+
+
+
+
+## packaging
+sudo apt install p7zip-full p7zip-rar
+
+curl https://dl.nwjs.io/v0.60.0/nwjs-sdk-v0.60.0-win-ia32.zip
+curl https://dl.nwjs.io/v0.60.0/nwjs-sdk-v0.60.0-linux-x64.tar.gz
+
+# https://7-zip.de/download.html
+wget https://7-zip.org/a/7z2107.exe 
+wget https://7-zip.org/a/7z2107-x64.exe
+
+wget https://7-zip.org/a/lzma2107.7z bin/7zSD.sfx
+
+// config.txt
+
+```
+;!@Install@!UTF-8!
+Title="SOFTWARE v1.0.0.0"
+BeginPrompt="Do you want to install SOFTWARE v1.0.0.0?"
+RunProgram="setup.exe"
+;!@InstallEnd@!
+```
+
+copy /b 7zSD.sfx + config.txt + Installer.7z MyInstaller.exe
+
+If you need an SFX module that doesn't ask for Admin permissions, you could rebuild the SFX module from source, or simpler, edit its file version info with a resource editor like this one. Just remove the word "Setup" from the FileDescription field, in the case of the mentioned Resource Hacker compile the file, and save the EXE file.
+
+node-resourcehacker node-rcedit.
+These tools should have been discussed before, and I switched to node-rcedit because it's open source and focused on this task for Electron apps, and it doesn't have a GUI.
+
+
+
+7z x 7z1805-x64.exe
+7z a -mhe=on -p -sfx7z.sfx data.exe data
+
+mingw-w32 mingw-w64 nsis-doc nsis-pluginapi
+
+(/usr/local/win32/bin/makensis) around WINE and makensis.exe so I could call it without a bunch of nonsense.
+
+makensis wrapper script:
+#!/bin/sh
+wine.sh /usr/local/win32/bin/makensis.exe $*
+
+you can sign them from Linux using `signcode` which is a component of Mono, or `osslsigncode` from your distribution’s repository.
+
+https://github.com/idleberg/node-makensis-cli
+
+7z a -tzip hyper.zip ./
+7z u <archive-filename> -tzip <list-of-files-to-update>
+7z d <archive-filename> -tzip <list-of-files-to-delete>
+cat nw package.nw > app && chmod +x app && rm -f nw
+copy /b nw.exe+package.nw app.exe

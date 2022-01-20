@@ -1,4 +1,6 @@
 // good answer from me about MediaStream => MediaStram https://stackoverflow.com/questions/11292076/load-audiodata-into-audiobuffersourcenode-from-audio-element-via-createmediae/70753627#70753627
+// https://developer.mozilla.org/en-US/docs/Web/API/MediaSource
+// https://developer.mozilla.org/en-US/docs/Web/API/Media_Source_Extensions_API
 import { ReadableStreamWithPush, readableFromEvent } from './helpers-stream.js'
 import { initReceiverStats, initSenderStats } from './timeline-graph.js'
 import { WebrtcCodecSelect } from './webrtc-codec-element.js';
