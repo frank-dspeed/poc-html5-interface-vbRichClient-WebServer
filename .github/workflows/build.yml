@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: 17.4
       - name: Build/release package.nw Windows
-          if: runner.os == 'windows-latest'
+        if: runner.os == 'windows-latest'
         #with:
           # github_token: ${{ secrets.github_token }}
         run: |
@@ -38,7 +38,7 @@ jobs:
           dir
 
       - name: Build/release package.nw Linux
-          if: runner.os == 'ubuntu-latest'
+        if: runner.os == 'ubuntu-latest'
         #with:
           # github_token: ${{ secrets.github_token }}
         run: |
