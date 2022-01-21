@@ -16,11 +16,11 @@ jobs:
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
       - name: List files in the repository Ubuntu
-        if: runner.os == 'ubuntu-latest'
+        if: runner.os == 'Linux'
         run: |
           ls ${{ github.workspace }}
       - name: List files in the repository Windows
-        if: runner.os == 'windows-latest'
+        if: runner.os == 'Windows'
         run: |
           dir ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: 17.4
       - name: Build/release package.nw Windows
-        if: runner.os == 'windows-latest'
+        if: runner.os == 'Windows'
         #with:
           # github_token: ${{ secrets.github_token }}
         run: |
@@ -38,7 +38,7 @@ jobs:
           dir
 
       - name: Build/release package.nw Linux
-        if: runner.os == 'ubuntu-latest'
+        if: runner.os == 'Linux'
         #with:
           # github_token: ${{ secrets.github_token }}
         run: |
