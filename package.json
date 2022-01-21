@@ -7,8 +7,8 @@
   "scripts": {
     "test": "mocha",
     "start": "cd audio-automation-luncher && node server.js",
-    "preinstall": "#cd audio-automation-luncher && cd npm install --only=prod",
-    "postinstall": "#cd audio-automation-luncher && cd npm install --only=prod # cd electron && npm ci && electron-builder install-app-deps",
+    "preinstall": "# cd audio-automation-luncher && cd npm install --only=prod",
+    "postinstall": "# cd audio-automation-luncher && cd npm install --only=prod # cd electron && npm ci && electron-builder install-app-deps",
     "build": "# cd electron && electron-builder --windows",
     "release": "# cd electron && electron-builder --windows --publish always"
   },

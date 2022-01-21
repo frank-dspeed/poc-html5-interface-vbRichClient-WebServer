@@ -33,7 +33,7 @@ jobs:
         #with:
           # github_token: ${{ secrets.github_token }}
         run: |
-          cd audio-automation-luncher && cd npm install --only=prod
+          cd audio-automation-luncher && npm install --only=prod
           7z a -tzip package.nw ./
           dir
 
@@ -45,7 +45,7 @@ jobs:
           export DEBIAN_FRONTEND=noninteractive && \
           apt update -y && apt-get install build-essential curl wget p7zip-full -y && \
           #curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o n && bash n latest && node -v
-          cd audio-automation-luncher && cd npm install --only=prod
+          cd audio-automation-luncher && npm install --only=prod
           7z a -tzip package.nw ./
           ls -ahl
       - name: Cache node modules
