@@ -1,11 +1,13 @@
 # poc-html5-interface-vbRichClient-WebServer
 This is a PoC Implementation with the main goal to send audio back and forth between a windows APP and also remote control it.
 
+## Conclusion 
+VB6 is 100% Dead while it gets still shipped and will run you need to Convert it into something diffrent writing bindings for current network stacks as also operating system bindings is to  much effort. Tested Diffrent Transports between VB6, There was no easy Transport implementation that allows us to connect.
+It is do able via ASIO, NETSOCKET, Windows Pipes, Maybe other ways but all got to much maintainance overhead.
+
 ## Use this
 https://lemanschik.com/poc-html5-interface-vbRichClient-WebServer/audio-automation-luncher/index.html
 https://lemanschik.com/poc-html5-interface-vbRichClient-WebServer/audio-automation-luncher/index.html?wss=wss://localhost:8080/input
-
-
 
 ### how to specify a alternativ server
 https://localhost:8080/?wss=wss://localhost:1214
